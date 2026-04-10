@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}{{ settings.get('site_name', 'Nexus Market') }}{% endblock %}</title>
+  <meta name="description" content="{{ settings.get('site_description', '') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <style>
+    :root {
+      --primary: {{ settings.get('primary_color', '#6366f1') }};
+      --accent: {{ settings.get('accent_color', '#ec4899') }};
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<!-- ── Navbar ── -->
+<nav class="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="{{ url_for('index') }}" class="nav-logo">
+        {% if settings.get('logo_url') %}
+          <img src="{{ settings['logo_url'] }}" alt="Logo" style="height:36px;border-radius:8px;">
+        {% else %}
+          <div class="logo-icon">✦</div>
+        {% endif %}
+        {{ settings.get('site_name', 'Nexus Market') }}
+      </a>
+
+      <div class="nav-links">
+        <a href="{{ url_for('index') }}" class="{{ 'active' if request.endpoint == 'index' }}">Home</a>
+        <a href="{{ url_for('shop') }}" class="{{ 'active' if request.endpoint == 'shop' }}">Shop</a>
+        {% for cat in all_categories[:4] %}
+          <a href="{{ url_for('shop', category=cat.slug) }}">{{ cat.name }}</a>
+        {% endfor %}
+      </div>
+
+      <form class="nav-search" action="{{ url_for('shop') }}" method="get">
+        <span class="search-icon">🔍</span>
+        <input type="search" name="q" placeholder="Search products…" value="{{ request.args.get('q', '') }}" />
+      </form>
+
+      <div class="nav-actions">
+        {% if current_user.is_authenticated %}
+          <div class="dropdown">
+            <div class="nav-avatar">{{ current_user.username[0].upper() }}</div>
+            <div class="dropdown-menu">
+              <a href="#">👤 {{ current_user.username }}</a>
+              <div class="dropdown-divider"></div>
+              {% if current_user.is_admin %}
+                <a href="{{ url_for('admin_dashboard') }}">⚙️ Admin Panel</a>
+              {% endif %}
+              <a href="{{ url_for('logout') }}">🚪 Logout</a>
+            </div>
+          </div>
+        {% else %}
+          <a href="{{ url_for('login') }}" class="btn btn-ghost btn-sm">Log in</a>
+          <a href="{{ url_for('register') }}" class="btn btn-primary btn-sm">Sign up</a>
+        {% endif %}
+        <button class="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Flash Messages ── -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="container flash-container">
+      {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">
+          <span>
+            {% if category == 'success' %}✅{% elif category == 'danger' %}❌{% elif category == 'info' %}ℹ️{% else %}⚠️{% endif %}
+          </span>
+          {{ message }}
+          <button class="flash-close">✕</button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<!-- ── Main Content ── -->
+<main>
+  {% block content %}{% endblock %}
+</main>
+
+<!-- ── Footer ── -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>{{ settings.get('site_name', 'Nexus Market') }}</h3>
+        <p>{{ settings.get('site_description', 'The premium marketplace for exclusive products.') }}</p>
+        <div class="footer-socials">
+          <a href="#" class="social-btn" title="Twitter">𝕏</a>
+          <a href="#" class="social-btn" title="Instagram">📷</a>
+          <a href="#" class="social-btn" title="Facebook">👍</a>
+          <a href="#" class="social-btn" title="YouTube">▶</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="{{ url_for('shop') }}">All Products</a></li>
+          {% for cat in all_categories[:4] %}
+            <li><a href="{{ url_for('shop', category=cat.slug) }}">{{ cat.name }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">Shipping Info</a></li>
+          <li><a href="#">Returns</a></li>
+          <li><a href="#">Track Order</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>{{ settings.get('footer_text', '© 2026 Nexus Market. All rights reserved.') }}</span>
+      <div style="display:flex;gap:16px;">
+        <a href="#" style="color:rgba(255,255,255,.4)">Privacy Policy</a>
+        <a href="#" style="color:rgba(255,255,255,.4)">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

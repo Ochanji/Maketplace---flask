@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="admin-layout">
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-label">Overview</div>
+    <a href="{{ url_for('admin_dashboard') }}" class="sidebar-link {{ 'active' if request.endpoint == 'admin_dashboard' }}">
+      <span class="icon">📊</span> Dashboard
+    </a>
+
+    <div class="sidebar-label">Catalog</div>
+    <a href="{{ url_for('admin_products') }}" class="sidebar-link {{ 'active' if 'product' in request.endpoint }}">
+      <span class="icon">📦</span> Products
+    </a>
+    <a href="{{ url_for('admin_categories') }}" class="sidebar-link {{ 'active' if 'categor' in request.endpoint }}">
+      <span class="icon">🗂️</span> Categories
+    </a>
+
+    <div class="sidebar-label">Config</div>
+    <a href="{{ url_for('admin_settings') }}" class="sidebar-link {{ 'active' if request.endpoint == 'admin_settings' }}">
+      <span class="icon">⚙️</span> Site Settings
+    </a>
+
+    <div style="flex:1"></div>
+    <div class="sidebar-label">Account</div>
+    <a href="{{ url_for('index') }}" class="sidebar-link">
+      <span class="icon">🏠</span> Back to Store
+    </a>
+    <a href="{{ url_for('logout') }}" class="sidebar-link">
+      <span class="icon">🚪</span> Logout
+    </a>
+  </aside>
+
+  <!-- Main -->
+  <div class="admin-main">
+    {% block admin_content %}{% endblock %}
+  </div>
+</div>
+{% endblock %}

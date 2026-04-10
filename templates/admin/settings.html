@@ -1,0 +1,109 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Site Settings — Admin{% endblock %}
+
+{% block admin_content %}
+<div class="admin-topbar">
+  <div>
+    <h1>Site Settings</h1>
+    <p>Customize your marketplace branding and content</p>
+  </div>
+</div>
+
+<div class="admin-content">
+  <form method="POST" action="{{ url_for('admin_settings') }}">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
+
+      <!-- Branding -->
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        <div class="card">
+          <div class="card-header"><h3>🏷️ Branding</h3></div>
+          <div class="card-body settings-grid">
+            <div class="form-group full">
+              <label class="form-label">Site Name</label>
+              <input type="text" name="site_name" class="form-control" value="{{ current.get('site_name','') }}" />
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Tagline</label>
+              <input type="text" name="site_tagline" class="form-control" value="{{ current.get('site_tagline','') }}" placeholder="e.g. Discover · Buy · Enjoy" />
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Site Description</label>
+              <textarea name="site_description" class="form-control" rows="2">{{ current.get('site_description','') }}</textarea>
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Logo URL</label>
+              <input type="url" name="logo_url" class="form-control" value="{{ current.get('logo_url','') }}" placeholder="https://…/logo.png" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3>🎨 Colors</h3></div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">Primary Color</label>
+              <div class="color-row">
+                <input type="color" name="primary_color" value="{{ current.get('primary_color','#6366f1') }}" data-preview="primary-preview" />
+                <div class="color-preview" id="primary-preview" style="background:{{ current.get('primary_color','#6366f1') }}"></div>
+                <input type="text" class="form-control" value="{{ current.get('primary_color','#6366f1') }}" style="flex:1;" readonly />
+              </div>
+            </div>
+            <div class="form-group mb-0">
+              <label class="form-label">Accent Color</label>
+              <div class="color-row">
+                <input type="color" name="accent_color" value="{{ current.get('accent_color','#ec4899') }}" data-preview="accent-preview" />
+                <div class="color-preview" id="accent-preview" style="background:{{ current.get('accent_color','#ec4899') }}"></div>
+                <input type="text" class="form-control" value="{{ current.get('accent_color','#ec4899') }}" style="flex:1;" readonly />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero & Footer -->
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        <div class="card">
+          <div class="card-header"><h3>🦸 Hero Section</h3></div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">Hero Title</label>
+              <input type="text" name="hero_title" class="form-control" value="{{ current.get('hero_title','') }}" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Hero Subtitle</label>
+              <textarea name="hero_subtitle" class="form-control" rows="2">{{ current.get('hero_subtitle','') }}</textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">CTA Button Text</label>
+              <input type="text" name="hero_cta" class="form-control" value="{{ current.get('hero_cta','Explore Now') }}" />
+            </div>
+            <div class="form-group mb-0">
+              <label class="form-label">Hero Background Image URL</label>
+              <input type="url" name="hero_image_url" class="form-control" value="{{ current.get('hero_image_url','') }}" placeholder="https://…/hero.jpg" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3>📩 Contact & Footer</h3></div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">Contact Email</label>
+              <input type="email" name="contact_email" class="form-control" value="{{ current.get('contact_email','') }}" />
+            </div>
+            <div class="form-group mb-0">
+              <label class="form-label">Footer Text</label>
+              <input type="text" name="footer_text" class="form-control" value="{{ current.get('footer_text','') }}" />
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;">
+          💾 Save All Settings
+        </button>
+      </div>
+
+    </div>
+  </form>
+</div>
+{% endblock %}

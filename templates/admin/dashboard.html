@@ -1,0 +1,104 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Dashboard — Admin{% endblock %}
+
+{% block admin_content %}
+<div class="admin-topbar">
+  <div>
+    <h1>Dashboard</h1>
+    <p>Welcome back, {{ current_user.username }}. Here's what's happening.</p>
+  </div>
+  <a href="{{ url_for('admin_product_new') }}" class="btn btn-primary btn-sm">+ New Product</a>
+</div>
+
+<div class="admin-content">
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon stat-icon-blue">📦</div>
+      <div class="stat-info">
+        <div class="num">{{ stats.products }}</div>
+        <div class="label">Total Products</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon stat-icon-green">👥</div>
+      <div class="stat-info">
+        <div class="num">{{ stats.users }}</div>
+        <div class="label">Registered Users</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon stat-icon-amber">🗂️</div>
+      <div class="stat-info">
+        <div class="num">{{ stats.categories }}</div>
+        <div class="label">Categories</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon stat-icon-pink">⭐</div>
+      <div class="stat-info">
+        <div class="num">{{ stats.featured }}</div>
+        <div class="label">Featured Items</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Products -->
+  <div class="card">
+    <div class="card-header">
+      <h3>Recent Products</h3>
+      <a href="{{ url_for('admin_products') }}" class="btn btn-ghost btn-sm">View all →</a>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Featured</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in recent_products %}
+            <tr>
+              <td>
+                <div class="product-name-cell">
+                  {% if p.image_url %}
+                    <img src="{{ p.image_url }}" class="product-thumb" alt="" />
+                  {% else %}
+                    <div class="product-thumb-placeholder">📦</div>
+                  {% endif %}
+                  <div>
+                    <div style="font-weight:600;color:var(--dark)">{{ p.name[:40] }}{% if p.name|length > 40 %}…{% endif %}</div>
+                    <div style="font-size:.75rem;color:var(--gray)">#{{ p.id }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>{{ p.category.name if p.category else '—' }}</td>
+              <td style="font-weight:700">${{ '%.2f'|format(p.price) }}</td>
+              <td>
+                {% if p.stock > 0 %}
+                  <span class="tag tag-green">{{ p.stock }}</span>
+                {% else %}
+                  <span class="tag tag-red">0</span>
+                {% endif %}
+              </td>
+              <td>{{ '⭐' if p.featured else '—' }}</td>
+              <td>
+                <div class="actions">
+                  <a href="{{ url_for('admin_product_edit', pid=p.id) }}" class="btn btn-ghost btn-sm">Edit</a>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

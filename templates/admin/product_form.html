@@ -1,0 +1,138 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}{{ 'Edit' if product else 'New' }} Product — Admin{% endblock %}
+
+{% block admin_content %}
+<div class="admin-topbar">
+  <div>
+    <h1>{{ 'Edit Product' if product else 'Add New Product' }}</h1>
+    <p>{{ product.name if product else 'Fill in the details below' }}</p>
+  </div>
+  <a href="{{ url_for('admin_products') }}" class="btn btn-ghost btn-sm">← Back</a>
+</div>
+
+<div class="admin-content">
+  <form method="POST" style="display:grid;grid-template-columns:1fr 360px;gap:24px;align-items:start;">
+
+    <!-- Main Info -->
+    <div style="display:flex;flex-direction:column;gap:20px;">
+
+      <div class="card">
+        <div class="card-header"><h3>Product Information</h3></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">Product Name *</label>
+            <input type="text" name="name" class="form-control" required placeholder="e.g. Wireless Headphones Pro"
+                   value="{{ product.name if product else '' }}" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description *</label>
+            <textarea name="description" class="form-control" required placeholder="Describe the product in detail…" rows="5">{{ product.description if product else '' }}</textarea>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group mb-0">
+              <label class="form-label">Price ($) *</label>
+              <input type="number" name="price" class="form-control" step="0.01" min="0" required
+                     value="{{ product.price if product else '' }}" />
+            </div>
+            <div class="form-group mb-0">
+              <label class="form-label">Original Price ($) <small style="font-weight:400;color:var(--gray)">(for strike-through)</small></label>
+              <input type="number" name="original_price" class="form-control" step="0.01" min="0"
+                     value="{{ product.original_price if product and product.original_price else '' }}" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h3>Media</h3></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">Image URL</label>
+            <input type="url" name="image_url" id="image_url" class="form-control"
+                   placeholder="https://example.com/image.jpg"
+                   value="{{ product.image_url if product else '' }}" />
+          </div>
+          {% if product and product.image_url %}
+            <img id="img-preview" src="{{ product.image_url }}" alt="Preview"
+                 style="max-height:180px;border-radius:var(--radius-sm);object-fit:cover;margin-top:8px;" />
+          {% else %}
+            <img id="img-preview" src="" alt="Preview" style="display:none;max-height:180px;border-radius:var(--radius-sm);object-fit:cover;margin-top:8px;" />
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Sidebar Options -->
+    <div style="display:flex;flex-direction:column;gap:20px;">
+
+      <div class="card">
+        <div class="card-header"><h3>Organization</h3></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select name="category_id" class="form-control sort-select" style="width:100%">
+              <option value="">— No category —</option>
+              {% for cat in categories %}
+                <option value="{{ cat.id }}" {{ 'selected' if product and product.category_id == cat.id }}>
+                  {{ cat.icon }} {{ cat.name }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Badge</label>
+            <select name="badge" class="form-control sort-select" style="width:100%">
+              <option value="" {{ 'selected' if not product or not product.badge }}>None</option>
+              <option value="New" {{ 'selected' if product and product.badge == 'New' }}>New</option>
+              <option value="Sale" {{ 'selected' if product and product.badge == 'Sale' }}>Sale</option>
+              <option value="Hot" {{ 'selected' if product and product.badge == 'Hot' }}>Hot</option>
+              <option value="Bestseller" {{ 'selected' if product and product.badge == 'Bestseller' }}>Bestseller</option>
+            </select>
+          </div>
+          <div class="form-group mb-0">
+            <label class="form-label">Stock Quantity</label>
+            <input type="number" name="stock" class="form-control" min="0"
+                   value="{{ product.stock if product else 0 }}" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h3>Stats & Visibility</h3></div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="form-group mb-0">
+              <label class="form-label">Rating (0–5)</label>
+              <input type="number" name="rating" class="form-control" min="0" max="5" step="0.1"
+                     value="{{ product.rating if product else 4.5 }}" />
+            </div>
+            <div class="form-group mb-0">
+              <label class="form-label">Reviews Count</label>
+              <input type="number" name="reviews" class="form-control" min="0"
+                     value="{{ product.reviews if product else 0 }}" />
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:16px;margin-bottom:0;">
+            <label class="form-check" style="align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" name="featured" {{ 'checked' if product and product.featured }} />
+              <div>
+                <strong style="color:var(--dark);font-size:.875rem;">Feature this product</strong>
+                <p style="font-size:.8rem;margin:0;margin-top:2px;">Show in homepage featured section</p>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;">
+        <button type="submit" class="btn btn-primary" style="flex:1;justify-content:center;">
+          {{ '💾 Save Changes' if product else '✦ Create Product' }}
+        </button>
+        <a href="{{ url_for('admin_products') }}" class="btn btn-ghost">Cancel</a>
+      </div>
+
+    </div>
+  </form>
+</div>
+{% endblock %}

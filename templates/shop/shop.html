@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Shop — {{ settings.get('site_name','Nexus Market') }}{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:40px;padding-bottom:80px;">
+
+  <div class="breadcrumb">
+    <a href="{{ url_for('index') }}">Home</a> /
+    <span>Shop</span>
+    {% if q %}<span>/ "{{ q }}"</span>{% endif %}
+  </div>
+
+  <div class="shop-layout">
+    <!-- Sidebar Filters -->
+    <aside class="shop-sidebar">
+      <div class="filter-group">
+        <h4>Categories</h4>
+        <a href="{{ url_for('shop', q=q, sort=sort) }}" class="filter-option {{ 'active' if not active_cat }}">
+          🛍️ All Products
+        </a>
+        {% for cat in all_categories %}
+          <a href="{{ url_for('shop', category=cat.slug, q=q, sort=sort) }}"
+             class="filter-option {{ 'active' if active_cat == cat.slug }}">
+            {{ cat.icon }} {{ cat.name }}
+          </a>
+        {% endfor %}
+      </div>
+    </aside>
+
+    <!-- Products -->
+    <div>
+      <div class="shop-header">
+        <div class="result-count">
+          <strong>{{ products|length }}</strong> product{{ 's' if products|length != 1 }} found
+        </div>
+        <form method="get" id="sort-form">
+          <input type="hidden" name="q" value="{{ q }}" />
+          <input type="hidden" name="category" value="{{ active_cat }}" />
+          <select name="sort" class="sort-select" onchange="document.getElementById('sort-form').submit()">
+            <option value="newest" {{ 'selected' if sort == 'newest' }}>Newest</option>
+            <option value="price_asc" {{ 'selected' if sort == 'price_asc' }}>Price: Low to High</option>
+            <option value="price_desc" {{ 'selected' if sort == 'price_desc' }}>Price: High to Low</option>
+            <option value="rating" {{ 'selected' if sort == 'rating' }}>Top Rated</option>
+          </select>
+        </form>
+      </div>
+
+      {% if products %}
+        <div class="products-grid">
+          {% for p in products %}
+            {% include 'shop/_product_card.html' %}
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <div class="empty-icon">🔍</div>
+          <h3>No products found</h3>
+          <p>Try a different search or browse all categories.</p>
+          <a href="{{ url_for('shop') }}" class="btn btn-primary" style="margin-top:20px">Browse All</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

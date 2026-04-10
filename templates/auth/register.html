@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Create Account — {{ settings.get('site_name','Nexus Market') }}{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="auth-container">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}" style="margin-bottom:16px;">
+            {{ message }} <button class="flash-close">✕</button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="logo-icon">✦</div>
+        {{ settings.get('site_name', 'Nexus Market') }}
+      </div>
+
+      <h2>Create your account</h2>
+      <p class="subtitle">Join thousands of happy shoppers today</p>
+
+      <form method="POST" action="{{ url_for('register') }}">
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <div class="input-icon-wrap">
+            <span class="input-icon">👤</span>
+            <input type="text" name="username" class="form-control" placeholder="Choose a username" required autofocus />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email address</label>
+          <div class="input-icon-wrap">
+            <span class="input-icon">✉️</span>
+            <input type="email" name="email" class="form-control" placeholder="you@example.com" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="input-icon-wrap">
+            <span class="input-icon">🔒</span>
+            <input type="password" name="password" class="form-control" placeholder="Create a strong password" required minlength="6" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Confirm Password</label>
+          <div class="input-icon-wrap">
+            <span class="input-icon">🔒</span>
+            <input type="password" name="confirm" class="form-control" placeholder="Repeat your password" required />
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-full" style="justify-content:center;padding:14px;">
+          Create Account →
+        </button>
+      </form>
+
+      <p class="auth-link">
+        Already have an account? <a href="{{ url_for('login') }}">Sign in</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

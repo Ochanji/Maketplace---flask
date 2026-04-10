@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% block title %}{{ settings.get('site_name','Nexus Market') }} — {{ settings.get('site_tagline','') }}{% endblock %}
+
+{% block content %}
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-content fade-up">
+        <div class="hero-badge">
+          ✦ Premium Marketplace
+        </div>
+        <h1>{{ settings.get('hero_title', 'Shop the Future') }}</h1>
+        <p>{{ settings.get('hero_subtitle', 'Curated products. Unbeatable prices. Delivered fast.') }}</p>
+        <div class="hero-actions">
+          <a href="{{ url_for('shop') }}" class="btn btn-primary btn-lg">
+            {{ settings.get('hero_cta', 'Explore Now') }} →
+          </a>
+          {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('register') }}" class="btn btn-outline btn-lg" style="color:white;border-color:rgba(255,255,255,.4)">
+              Join Free
+            </a>
+          {% endif %}
+        </div>
+        <div class="hero-stats">
+          <div>
+            <span class="hero-stat-num">10K+</span>
+            <span class="hero-stat-label">Products</span>
+          </div>
+          <div>
+            <span class="hero-stat-num">50K+</span>
+            <span class="hero-stat-label">Customers</span>
+          </div>
+          <div>
+            <span class="hero-stat-num">4.9★</span>
+            <span class="hero-stat-label">Rating</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual fade-up delay-2">
+        {% for p in featured[:4] %}
+          <a href="{{ url_for('product_detail', pid=p.id) }}" class="hero-card">
+            {% if p.image_url %}
+              <img src="{{ p.image_url }}" alt="{{ p.name }}" />
+            {% else %}
+              <div style="aspect-ratio:1;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:2.5rem;">📦</div>
+            {% endif %}
+            <div class="hero-card-info">
+              <div class="name">{{ p.name[:28] }}{% if p.name|length > 28 %}…{% endif %}</div>
+              <div class="price">${{ '%.2f'|format(p.price) }}</div>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Feature Badges ── -->
+<section class="section-sm">
+  <div class="container">
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🚀</div>
+        <h4>Fast Delivery</h4>
+        <p>Express shipping available. Get your order in 1-2 business days.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h4>Secure Payment</h4>
+        <p>All transactions protected with bank-grade SSL encryption.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">↩️</div>
+        <h4>Easy Returns</h4>
+        <p>30-day hassle-free return policy on all eligible items.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💬</div>
+        <h4>24/7 Support</h4>
+        <p>Our team is always here to help you with any questions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Categories ── -->
+{% if categories %}
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <div class="section-label">Browse</div>
+        <h2>Shop by Category</h2>
+      </div>
+      <a href="{{ url_for('shop') }}" class="btn btn-ghost btn-sm">View all →</a>
+    </div>
+    <div class="categories-strip">
+      <a href="{{ url_for('shop') }}" class="cat-pill">
+        🛍️ All Products
+      </a>
+      {% for cat in categories %}
+        <a href="{{ url_for('shop', category=cat.slug) }}" class="cat-pill">
+          {{ cat.icon }} {{ cat.name }}
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ── Featured Products ── -->
+{% if featured %}
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <div class="section-label">Curated</div>
+        <h2>Featured Products</h2>
+        <p>Hand-picked deals and bestsellers just for you.</p>
+      </div>
+      <a href="{{ url_for('shop') }}" class="btn btn-outline btn-sm">See all</a>
+    </div>
+    <div class="products-grid">
+      {% for p in featured %}
+        {% include 'shop/_product_card.html' %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ── All Products ── -->
+{% if all_products %}
+<section class="section" style="padding-top:0;background:white;">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <div class="section-label">Discover</div>
+        <h2>New Arrivals</h2>
+        <p>Fresh products added to our collection.</p>
+      </div>
+      <a href="{{ url_for('shop') }}" class="btn btn-primary btn-sm">Shop all</a>
+    </div>
+    <div class="products-grid">
+      {% for p in all_products[:8] %}
+        {% include 'shop/_product_card.html' %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ── Newsletter ── -->
+<div class="container">
+  <div class="newsletter">
+    <h2>Stay in the Loop</h2>
+    <p>Subscribe for exclusive deals, new arrivals, and insider-only discounts.</p>
+    <form class="newsletter-form" onsubmit="return false">
+      <input type="email" placeholder="Enter your email address…" />
+      <button class="btn">Subscribe ✦</button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,46 @@
+<div class="product-card">
+  <div class="product-card-img">
+    {% if p.image_url %}
+      <img src="{{ p.image_url }}" alt="{{ p.name }}" loading="lazy" />
+    {% else %}
+      <div class="no-img">📦</div>
+    {% endif %}
+    {% if p.badge %}
+      <span class="product-badge badge-{{ p.badge.lower() }}">{{ p.badge }}</span>
+    {% elif p.discount_pct > 0 %}
+      <span class="product-badge badge-sale">-{{ p.discount_pct }}%</span>
+    {% endif %}
+    <div class="product-wishlist" data-liked="false" title="Add to wishlist">♡</div>
+  </div>
+
+  <div class="product-card-body">
+    {% if p.category %}
+      <div class="product-category">{{ p.category.name }}</div>
+    {% endif %}
+    <h3>
+      <a href="{{ url_for('product_detail', pid=p.id) }}" style="color:inherit;">{{ p.name }}</a>
+    </h3>
+    <div class="product-rating">
+      <span class="stars">{{ '★' * (p.rating|int) }}{{ '☆' * (5 - p.rating|int) }}</span>
+      <span class="rating-count">({{ p.reviews }})</span>
+    </div>
+    <div class="product-price">
+      <span class="price-current">${{ '%.2f'|format(p.price) }}</span>
+      {% if p.original_price %}
+        <span class="price-original">${{ '%.2f'|format(p.original_price) }}</span>
+      {% endif %}
+      {% if p.discount_pct > 0 %}
+        <span class="price-discount">-{{ p.discount_pct }}%</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="product-card-footer">
+    {% if not p.in_stock %}
+      <span class="stock-badge stock-out">● Out of stock</span>
+    {% endif %}
+    <a href="{{ url_for('product_detail', pid=p.id) }}" class="btn-add-cart">
+      🛒 {% if p.in_stock %}Add to Cart{% else %}View Product{% endif %}
+    </a>
+  </div>
+</div>
